@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace CA
@@ -15,6 +16,7 @@ namespace CA
 
         // Rule 110
         private bool[] rule = new bool[8] { false, true, true, true, false, true, true, false };
+        public int CellCount => cells.Count;
 
         private void Start()
         {
@@ -25,12 +27,15 @@ namespace CA
         {
             StartCoroutine(ReCreateI());
         }
+
         public IEnumerator ReCreateI()
         {
             int count = 0;
-            foreach (var cell in cells)
+
+            while (cells.Count > 0)
             {
-                Destroy(cell);
+                Destroy(cells[0]);
+                cells.RemoveAt(0);
                 if (count % 50 == 0)
                 {
                     yield return new WaitForEndOfFrame();
@@ -40,6 +45,14 @@ namespace CA
             }
 
             Create();
+        }
+        
+        public void SetRule(string ruleNumber)
+        {
+            if (int.TryParse(ruleNumber, out int ruleInt))
+            {
+                SetRule(ruleInt);
+            }
         }
 
         public void SetRule(int ruleNumber)
