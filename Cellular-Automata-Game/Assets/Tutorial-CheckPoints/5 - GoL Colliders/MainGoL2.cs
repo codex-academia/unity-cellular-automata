@@ -53,7 +53,7 @@ namespace CA
             else if (Input.GetMouseButtonUp(2))
             {
                 var ray = main.ScreenPointToRay(Input.mousePosition);
-                var hits = Physics.SphereCastAll(ray, 10);
+                var hits = Physics.SphereCastAll(ray, 5);
                 Debug.Log($"Found {hits.Length} hits.");
 
                 foreach (var hit in hits)
