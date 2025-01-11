@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CA
 {
-    public class GameOfLife
+    public class GameOfLife2
     {
         bool[][] currentState;
         bool[][] nextState;
@@ -11,7 +11,7 @@ namespace CA
         private readonly int gridX;
         private readonly int gridY;
 
-        public GameOfLife(int gridX, int gridY)
+        public GameOfLife2(int gridX, int gridY)
         {
             this.gridX = gridX;
             this.gridY = gridY;
@@ -121,7 +121,62 @@ namespace CA
 
         public void SetAlive(int i, int j)
         {
+            if (i < 0 || i >= gridX || j < 0 || j >= gridY)
+            {
+                Debug.LogWarning($"Invalid cell position. i: {i}, j: {j}");
+                return;
+            }
+
             currentState[i][j] = true;
+        }
+
+        public void DestroyCell(int i, int j)
+        {
+            currentState[i][j] = false;
+            nextState[i][j] = false;
+        }
+
+        public void DrawGliderGun(int i, int j)
+        {
+            SetAlive(i, j);
+            SetAlive(i, j + 1);
+            SetAlive(i + 1, j);
+            SetAlive(i + 1, j + 1);
+
+            SetAlive(i + 10, j);
+            SetAlive(i + 10, j + 1);
+            SetAlive(i + 10, j + 2);
+            SetAlive(i + 11, j - 1);
+            SetAlive(i + 11, j + 3);
+            SetAlive(i + 12, j - 2);
+            SetAlive(i + 12, j + 4);
+            SetAlive(i + 13, j - 2);
+            SetAlive(i + 13, j + 4);
+            SetAlive(i + 14, j + 1);
+            SetAlive(i + 15, j - 1);
+            SetAlive(i + 15, j + 3);
+            SetAlive(i + 16, j);
+            SetAlive(i + 16, j + 1);
+            SetAlive(i + 16, j + 2);
+            SetAlive(i + 17, j + 1);
+
+            SetAlive(i + 20, j - 2);
+            SetAlive(i + 20, j - 3);
+            SetAlive(i + 20, j - 4);
+            SetAlive(i + 21, j - 2);
+            SetAlive(i + 21, j - 3);
+            SetAlive(i + 21, j - 4);
+            SetAlive(i + 22, j - 1);
+            SetAlive(i + 22, j - 5);
+            SetAlive(i + 24, j);
+            SetAlive(i + 24, j - 1);
+            SetAlive(i + 24, j - 5);
+            SetAlive(i + 24, j - 6);
+
+            SetAlive(i + 34, j - 2);
+            SetAlive(i + 34, j - 3);
+            SetAlive(i + 35, j - 2);
+            SetAlive(i + 35, j - 3);
         }
     }
 }

@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Random = System.Random;
 
 namespace CA
 {
-    public class MainGoL : MonoBehaviour
+    public class MainGoL2 : MonoBehaviour
     {
-        public GameOfLife gameOfLife;
-        private List<GameObject> gameObjects;
+        public GameOfLife2 gameOfLife;
+        public List<GameObject> gameObjects;
+        public int Cells => gameObjects.Count;
         public GameObject cellPrefab;
         private Camera main;
 
-        private void Start()
+        private void Awake()
         {
-            gameOfLife = new GameOfLife(100, 100);
+            gameOfLife = new GameOfLife2(100, 100);
             gameObjects = new List<GameObject>();
             main = Camera.main;
         }
+
 
         private void Update()
         {
@@ -47,6 +51,22 @@ namespace CA
                     gameOfLife.DrawGlider((int)point.x, (int)point.z);
                 }
             }
+            else if (Input.GetMouseButtonUp(2))
+            {
+                var ray = main.ScreenPointToRay(Input.mousePosition);
+                var hits = Physics.SphereCastAll(ray, 10);
+                Debug.Log($"Found {hits.Length} hits.");
+
+                foreach (var hit in hits)
+                {
+                    var cellController = hit.collider.GetComponent<CellController>();
+                    if (cellController != null)
+                    {
+                        gameObjects.Remove(cellController.gameObject);
+                        cellController.Destroy();
+                    }
+                }
+            }
         }
 
         private void DrawCells(List<Vector3> cells)
@@ -61,10 +81,20 @@ namespace CA
             foreach (var cell in cells)
             {
                 var block = Instantiate(cellPrefab);
+                block.GetComponent<CellController>().Bind(gameOfLife);
                 block.transform.position = cell;
                 gameObjects.Add(block);
             }
         }
-        
+
+        public void SpawnRandomGlider()
+        {
+            gameOfLife.DrawGlider(UnityEngine.Random.Range(10, 90), UnityEngine.Random.Range(10, 90));
+        }
+
+        public void SpawnRandomGun()
+        {
+            gameOfLife.DrawGliderGun(UnityEngine.Random.Range(10, 50), UnityEngine.Random.Range(10, 50));
+        }
     }
 }
