@@ -13,6 +13,7 @@ namespace CA
         public int Cells => gameObjects.Count;
         public GameObject cellPrefab;
         private Camera main;
+        public bool AutoUpdate = true;
 
         private void Awake()
         {
@@ -24,11 +25,9 @@ namespace CA
 
         private void Update()
         {
-            if (Time.frameCount % 10 == 0)
+            if (AutoUpdate && Time.frameCount % 10 == 0)
             {
-                gameOfLife.Update();
-                gameOfLife.Draw();
-                DrawCells(gameOfLife.Cells);
+                UpdateGame();
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -67,6 +66,13 @@ namespace CA
                     }
                 }
             }
+        }
+
+        public void UpdateGame()
+        {
+            gameOfLife.Update();
+            gameOfLife.Draw();
+            DrawCells(gameOfLife.Cells);
         }
 
         private void DrawCells(List<Vector3> cells)
