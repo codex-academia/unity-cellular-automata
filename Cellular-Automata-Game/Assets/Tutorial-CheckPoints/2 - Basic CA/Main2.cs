@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,15 +8,74 @@ namespace CA
     public class Main2 : MonoBehaviour
     {
         public GameObject cellPrefab;
+        public int columns = 100;
+        public int maxRows = 100;
+
+        private List<GameObject> cells;
+
+        // Rule 110
+        private bool[] rule = new bool[8] { false, true, true, true, false, true, true, false };
+
         private void Start()
         {
-            List<Transform> cells = new List<Transform>();
-            // Rule 110
-            bool[] rule = new bool[8] { false, true, true, true, false, true, true, false };
+            Create();
+        }
 
-            int columns = 100;
+        public IEnumerator ReCreate()
+        {
+            int count = 0;
+            foreach (var cell in cells)
+            {
+                Destroy(cell);
+                if (count % 50 == 0)
+                {
+                    yield return new WaitForEndOfFrame();
+                }
 
-            int maxRows = 100;
+                count++;
+            }
+
+            Create();
+        }
+
+        private void SetRule(int ruleNumber)
+        {
+            if (ruleNumber < 0 || ruleNumber > 255)
+            {
+                throw new ArgumentException("Rule number must be between 0 and 255");
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                rule[i] = (ruleNumber & (1 << i)) != 0;
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Space key was pressed.");
+                StartCoroutine(ReCreate());
+            }
+
+            if (Input.GetKeyUp(KeyCode.Alpha1))
+            {
+                SetRule(110);
+                StartCoroutine(ReCreate());
+            }
+
+            if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                SetRule(30);
+                StartCoroutine(ReCreate());
+            }
+        }
+
+        private void Create()
+        {
+            cells = new List<GameObject>();
+
 
             // Set the Initial State last is alive
             bool[] currentState = new bool[columns];
@@ -23,6 +84,7 @@ namespace CA
             {
                 currentState[i] = false;
             }
+
             currentState[columns - 1] = true;
 
             // Iterate over the rows
@@ -42,10 +104,12 @@ namespace CA
                     {
                         num += 4; // 2^2
                     }
+
                     if (currentState[b])
                     {
                         num += 2; // 2^1
                     }
+
                     if (currentState[c])
                     {
                         num += 1; // 2^0
@@ -64,7 +128,7 @@ namespace CA
                         block.name = $"Cell_{i}_{row}";
                         Transform cell = block.transform;
                         cell.position = new Vector3(i, 0, -row);
-                        cells.Add(cell);
+                        cells.Add(block);
                     }
                 }
 
@@ -73,11 +137,7 @@ namespace CA
                 {
                     currentState[i] = nextState[i];
                 }
-
             }
-
-
-
         }
     }
 }
